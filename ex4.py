@@ -1,33 +1,49 @@
+import os.path
 import re
 
 
 class FileProcessor:
-    filename: str
-    n_chars: int
-    n_words: int
-    n_sentences: int
+    __sentences_end_regex = re.compile(r'\.\.\.|\.|!|\?')
+    __words_regex = re.compile(r'[А-ЯЁҐЄЇа-яёґєїA-Za-z\d]+')
 
     def __init__(self, filename: str):
-        self.filename = filename
+        if not isinstance(filename, str):
+            raise TypeError('Filename should be str')
+        if not os.path.isfile(filename):
+            raise ValueError('Provided filename is not a filename')
+        self.__filename = filename
 
-    def process(self):
-        with open(self.filename, 'r') as file:
-            data = file.read()
-            self.n_chars = len(data)
-            self.n_words = self.count_words(data)
-            self.n_sentences = self.count_sentences(data)
+    def count_chars(self):
+        n_chars = 0
+        with open(self.__filename, 'r') as file:
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                n_chars += len(line)
+        return n_chars
 
-    @staticmethod
-    def count_words(data: str):
-        words_regex = re.compile(r'[^А-ЯЁҐЄЇа-яёґєїA-Za-z\d]+')
-        if data == '' or re.match(words_regex, data) is not None:
-            return 0
-        n_words = len(re.findall(words_regex, data))
-        # if the last symbol belongs to word (we have no splitter at the end)
-        if re.match(words_regex, data[-1]) is None:
-            n_words += 1
+    def count_words(self):
+        n_words = 0
+        with open(self.__filename, 'r') as file:
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                matches = re.findall(self.__words_regex, line)
+                n_words += len(matches)
         return n_words
 
-    @staticmethod
-    def count_sentences(data: str):
-        return len(re.findall(r'\.\.\.|\.|!|\?', data))
+    def count_sentences(self):
+        n_sentences = 0
+        with open(self.__filename, 'r') as file:
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                n_sentences += len(re.findall(self.__sentences_end_regex, line))
+        return n_sentences
+
+    @property
+    def filename(self):
+        return self.__filename

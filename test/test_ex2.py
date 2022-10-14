@@ -20,10 +20,19 @@ class TestEx2(unittest.TestCase):
     def test_default_values(self):
         number_without_numerator = Rational(denominator=4)
         self.assertEqual(0.25, number_without_numerator.float())
+
         number_without_denominator = Rational(numerator=5)
         self.assertEqual(5, number_without_denominator.float())
+
         number_without_anything = Rational()
         self.assertEqual(1, number_without_anything.float())
+
+    def test_type_check(self):
+        with self.assertRaises(TypeError):
+            Rational(numerator='duck')
+
+        with self.assertRaises(TypeError):
+            Rational(denominator='frog')
 
 
 if __name__ == '__main__':

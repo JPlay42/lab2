@@ -4,21 +4,24 @@ from ex5 import STUDENT, GROUP
 
 
 class TestEx5(unittest.TestCase):
-    def test_empty_name_surname_exceptions(self):
-        with self.assertRaises(AttributeError):
-            STUDENT(None, 'Surname')
-        with self.assertRaises(AttributeError):
-            STUDENT('Name', None)
-
-    def test_max_group_capacity(self):
-        group = GROUP('TV-12')
-        for i in range(20):
-            group.add_students(STUDENT(str(i), str(i)))
-        with self.assertRaises(IndexError):
-            group.add_students(STUDENT('Vasya', 'Pumpkin'))
+    def test_student_validation(self):
+        STUDENT('a', 'b', 3)
+        STUDENT('a', 'b')
+        with self.assertRaises(TypeError):
+            STUDENT(1, 'b')
+        with self.assertRaises(TypeError):
+            STUDENT('a', 2)
+        with self.assertRaises(ValueError):
+            STUDENT('', 'b')
+        with self.assertRaises(ValueError):
+            STUDENT('a', '')
+        with self.assertRaises(ValueError):
+            STUDENT('a', 'b', -1)
 
     def test_student_grade_validation(self):
         student = STUDENT('Vasya', 'Pumpkin')
+        with self.assertRaises(TypeError):
+            student.add_grades('not a grade')
         with self.assertRaises(ValueError):
             student.add_grades(-1)
         with self.assertRaises(ValueError):
@@ -30,6 +33,27 @@ class TestEx5(unittest.TestCase):
         student = STUDENT('Vasya', 'Pumpkin')
         student.add_grades(0, 50, 90, 100)
         self.assertEqual(60, student.avg_grade())
+
+    def test_group_name_validation(self):
+        GROUP('any string')
+        with self.assertRaises(TypeError):
+            GROUP(12345)
+        with self.assertRaises(ValueError):
+            GROUP('')
+
+    def test_add_students_validation(self):
+        group = GROUP('TV-12')
+        with self.assertRaises(TypeError):
+            group.add_students(STUDENT('a', 'a'),
+                               'not_a_student',
+                               STUDENT('b', 'b'))
+
+    def test_max_group_capacity(self):
+        group = GROUP('TV-12')
+        for i in range(20):
+            group.add_students(STUDENT(str(i), str(i)))
+        with self.assertRaises(IndexError):
+            group.add_students(STUDENT('Vasya', 'Pumpkin'))
 
     def test_top_five(self):
         students = (
