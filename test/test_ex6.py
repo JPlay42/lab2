@@ -1,8 +1,6 @@
-import io
 import unittest
-from unittest.mock import patch
 
-from ex6 import PriceTree, count_total
+from ex6 import PriceTree
 
 
 class TestEx6(unittest.TestCase):
