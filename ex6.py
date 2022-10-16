@@ -46,3 +46,22 @@ class PriceTree:
     def __no_such_product(self):
         raise ValueError('No such product')
 
+
+if __name__ == '__main__':
+    tree = PriceTree()
+    n_products = int(input('Amount of products: '))
+    for i in range(n_products):
+        code = int(input('Code: '))
+        price = int(input('Price: '))
+        tree.add(code, price)
+
+    n_cart_products = int(input('Amount of products in cart: '))
+    total = 0
+    for i in range(n_cart_products):
+        code = int(input('Code: '))
+        amount = int(input('Amount: '))
+        price = tree.get(code) * amount
+        total += price
+
+    print(f'Total: {total}')
+
